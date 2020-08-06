@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/running_minigame.rpy", line 105: expected statement.
-    result = _return
-           ^
+File "game/running_minigame.rpy", line 115: expected ':' not found.
+    label bb
+            ^
 
 Ren'Py Version: Ren'Py 7.3.5.606
-Thu Aug 06 14:06:14 2020
+Thu Aug 06 15:29:56 2020

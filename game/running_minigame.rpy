@@ -11,33 +11,42 @@ init 2 python:
     running_minigame_win = "bunny"
     running_minigame_lose = "farmer"
 
-    #game difficulty, should be set in call to label runningMinigame
-    running_minigame_diff = 1
+    #game difficulty
+    running_minigame_strength = 0
+    running_minigame_diff = 1  #should be set in call to label runningMinigame
 
     ##requires images:
-    bunny = Image('bunny.png')
-    farmer = Image('farmer2.png')
-    running_background = Image('farm2-01.png')
+    bunny = im.Scale('bunny.png', 300, 300)
+    farmer = im.Scale('farmer2.png', 700, 1000)
+    running_background = im.Scale('farm2-01.png', 1920, 1080)
+
+    #optional
+    keys=config.keymap['running_minigame'] = ['K_e']
 
     # minigame
     # class overwrites renpy.displayable for a custom minigame
+    #param:
+        #min: if goes below this then lose
+        #max: if goes above this then instant win
+        #length: if lasts longer then this number in seconds then win
+        #keys: the keys that allow player to move foward
+    #returns running_minigame_win or running_minigame_lose
     class RunningMinigameDisplayable(renpy.Displayable):
         def __init__(self,
-            start=50,
-            min=0,
+            min=200,
             max=1000,
             length=10,
-            keys=config.keymap['dismiss']
+            keys=config.keymap['running_minigame']
         ):
             renpy.Displayable.__init__(self)
             config.keymap['running_minigame_key'] = keys
             self.oldst = None
-            self.bunny_px = 300
-            self.bunny_py = 30
+            self.bunny_px = 700
+            self.bunny_py = 300
             self.farmer_px = 10
-            self.farmer_py = 10
+            self.farmer_py = 150
             self.difficulty = running_minigame_diff
-            self.value_add = 15
+            self.value_add = 15 + running_minigame_strength
             self.value_sub = 50
             self.min = min
             self.max = max
@@ -101,20 +110,23 @@ init 2 python:
 screen runningMinigame():
     add running_background
     default runningMinigame = RunningMinigameDisplayable()
-    text _('click to run away')
+    text _("tap 'e' to run away")
     add runningMinigame
 
 
 #label to call running_minigame
-#param: diff: the difficulty multiplier
+#param:
+    #strength: bunny's strength, easier addition
+    #diff: the difficulty multiplier
 #return true running_minigame_win or running_minigame_lose
-label runningMinigame(diff=1):
+label runningMinigame(strength, diff=1):
+    $running_minigame_strength = strength
     $running_minigame_diff = diff
 
     window hide
     $quick_menu = False
 
-    call screen runningMinigame
+    call screen runningMinigame()
 
     $result = _return
 

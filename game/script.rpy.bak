@@ -26,8 +26,8 @@ transform alpha_dissolve:
 
 #counts downward, displays a progress bar of how much time is left
 screen countdown:
-    timer 0.01 repeat True action If(time_1 > 0, true=SetVariable('time_1', time_1 - 0.01), false=[Hide('countdown'), Jump(timer_jump)])
-    bar value time_1 range timer_range xalign 0.5 yalign 0.9 xmaximum 300 at alpha_dissolve # This is the timer bar.
+    timer 0.01 repeat True action If(time > 0, true=SetVariable('time', time - 0.01), false=[Hide('countdown'), Jump(timer_jump)])
+    bar value time range timer_range xalign 0.5 yalign 0.9 xmaximum 300 at alpha_dissolve # This is the timer bar.
 
 #the start of the game, setup variables, show story
 label start:
@@ -155,7 +155,7 @@ label water:
             xalign 0.9
             yalign 0.6
 
-        $ time_1 = 2
+        $ time = 2
         $ timer_range = 2
         $ timer_jump = 'eaten'
         show screen countdown
@@ -172,7 +172,7 @@ label water:
             xalign 0.2
             yalign 0.2
 
-        $ time_1 = 3
+        $ time = 3
         $ timer_range = 3
         $ timer_jump = 'eaten'
         show screen countdown
@@ -189,7 +189,7 @@ label water:
             xalign 1.1
             yalign 0.6
 
-        $ time_1 = 2
+        $ time = 2
         $ timer_range = 2
         $ timer_jump = 'eaten'
         show screen countdown
@@ -249,7 +249,7 @@ label farm1:
             zoom 0.5
 
         #run minigame here
-        call runningMinigame(strength, 1) from _call_runningMinigame
+        call runningMinigame(1)
         if _return == running_minigame_lose:
             jump caught
 
@@ -278,7 +278,7 @@ label farm2:
             yalign 1.2
             zoom 0.5
         #run minigame here
-        call runningMinigame(strength, 2) from _call_runningMinigame_1
+        call runningMinigame(2)
         if _return == running_minigame_lose:
             jump caught
 
@@ -307,7 +307,7 @@ label farm3:
             yalign 1.2
             zoom 0.5
         #run minigame here
-        call runningMinigame(strength, 3) from _call_runningMinigame_2
+        call runningMinigame(3)
         if _return == running_minigame_lose:
             jump caught
 
@@ -348,8 +348,8 @@ label eaten:
 
     show eaten:
         zoom 0.3
-        xalign 0.6
-        yalign 0.8
+        xalign 0.8
+        yalign 0.7
 
     "You have been eaten!"
 
