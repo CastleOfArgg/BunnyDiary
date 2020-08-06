@@ -375,7 +375,7 @@ screen main_menu():
             text "[config.name!t]":
                 style "main_menu_title"
 
-            text "by Yi Fu":
+            text "by Yi Fu and Shawn Dowling":
                 style "main_menu_version"
 
 
