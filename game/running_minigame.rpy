@@ -1,17 +1,28 @@
 # bunny run minigame test
+# clicking game: excape the farmer by clicking as much as possable
+# with lose (delta) ground to farmer every frame
+# click to gain ground
+#returns running_minigame_win or running_minigame_lose
 
-init python:
+init 2 python:
     import time
 
-    ##requires:
-    bunny = Image('a.png')
-    farmer = Image('a.png')
-    running_background = Image('a.png')
+    #const return results
+    running_minigame_win = "bunny"
+    running_minigame_lose = "farmer"
+
+    #game difficulty, should be set in call to label runningMinigame
+    running_minigame_diff = 1
+
+    ##requires images:
+    bunny = Image('bunny.png')
+    farmer = Image('farmer2.png')
+    running_background = Image('farm2-01.png')
 
     # minigame
+    # class overwrites renpy.displayable for a custom minigame
     class RunningMinigameDisplayable(renpy.Displayable):
         def __init__(self,
-            difficulty=1,
             start=50,
             min=0,
             max=1000,
@@ -25,7 +36,7 @@ init python:
             self.bunny_py = 30
             self.farmer_px = 10
             self.farmer_py = 10
-            self.difficulty = difficulty
+            self.difficulty = running_minigame_diff
             self.value_add = 15
             self.value_sub = 50
             self.min = min
@@ -57,13 +68,14 @@ init python:
             far = renpy.render(farmer, width, height, st, at)
             r.blit(far, (int(self.farmer_px), int(self.farmer_py)))
 
-            #check for winner
+            #check for winner and return running_minigame_win
+            # or running_minigame_lose
             self.time_curr = time.time()
             if self.time_curr >= self.time_end or self.bunny_px >= self.max:
-                self.winner = "bunny"
+                self.winner = running_minigame_win
                 renpy.timeout(0)
             elif self.bunny_px <= self.min:
-                self.winner = "farmer"
+                self.winner = running_minigame_lose
                 renpy.timeout(0)
 
             #redraw and return render object
@@ -71,6 +83,7 @@ init python:
             return r
 
         #handle events
+        #eccepted events: timeout, excepted click key(s)
         def event(self, ev, x, y, st):
             if renpy.map_event(ev, 'running_minigame_key'):
                 self.bunny_px += self.value_add
@@ -84,28 +97,28 @@ init python:
                 raise renpy.IgnoreEvent()
 
 
+#screen for the running_minigame displayable
 screen runningMinigame():
     add running_background
     default runningMinigame = RunningMinigameDisplayable()
     text _('click to run away')
     add runningMinigame
 
-label start:
-    "ASDF"
-    jump runningMinigame
 
-label runningMinigame:
+#label to call running_minigame
+#param: diff: the difficulty multiplier
+#return true running_minigame_win or running_minigame_lose
+label runningMinigame(diff=1):
+    $running_minigame_diff = diff
+
     window hide
-    $qucik_menu = False
+    $quick_menu = False
 
     call screen runningMinigame
+
+    $result = _return
 
     $quick_menu = True
     window show
 
-    $winner = _return
-
-    if winner == 'bunny':
-        'you win'
-    else:
-        'you lose'
+    return result

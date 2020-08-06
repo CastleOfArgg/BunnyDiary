@@ -24,10 +24,12 @@ transform alpha_dissolve:
         linear 0.5 alpha 0
     # This is to fade the bar in and out, and is only required once in your script
 
+#counts downward, displays a progress bar of how much time is left
 screen countdown:
     timer 0.01 repeat True action If(time > 0, true=SetVariable('time', time - 0.01), false=[Hide('countdown'), Jump(timer_jump)])
     bar value time range timer_range xalign 0.5 yalign 0.9 xmaximum 300 at alpha_dissolve # This is the timer bar.
 
+#the start of the game, setup variables, show story
 label start:
 
     # Show a background. This uses a placeholder by default, but you can
@@ -75,6 +77,12 @@ label start:
     "Goal: survive 10 days"
     jump daily
 
+#the start of a new day, subtract water and food attributes,
+#check if attributes are too low (Death), ask player what they want to do
+#options:
+  #visit farm (hunger)
+  #get water (thirst)
+  #workout (strengh)
 label daily:
 
     $day += 1
@@ -123,6 +131,8 @@ label daily:
         "exercise":
             jump exercise
 
+#bunny tries to get water, small minigame to avoid preditors
+#adds to [thirst] if successful
 label water:
 
     scene river:
@@ -192,6 +202,7 @@ label water:
     'water +13'
     jump daily
 
+#player chooses which farm to go to
 label farm:
 
     scene farm:
@@ -217,6 +228,8 @@ label farm:
 
     jump daily
 
+#bunny visits farm 1, lowest chance of getting into running minigame,
+#and lowest food reward
 label farm1:
     scene farm1:
         zoom 0.59
@@ -236,26 +249,17 @@ label farm1:
             zoom 0.5
 
         #run minigame here
-        $ time = 1
-        $ timer_range = 1
-        $ timer_jump = 'caught'
-        if strength >= 5:
-            $ time = 2
-            $ timer_range = 2
-        if strength > 10:
-            $ time = 3
-            $ timer_range = 3
-        show screen countdown
-        menu:
-            'RUN!!':
-                hide screen countdown
-                hide farmer1
+        call runningMinigame(1)
+        if _return == running_minigame_lose:
+            jump caught
 
     'food +7'
     $ food+=7
 
     jump daily
 
+#bunny visits farm 2, medium chance of getting into running minigame,
+#and medium food reward
 label farm2:
     scene farm2:
         zoom 0.59
@@ -274,43 +278,17 @@ label farm2:
             yalign 1.2
             zoom 0.5
         #run minigame here
-        $ time = 1
-        $ timer_range = 1
-        $ timer_jump = 'caught'
-        if strength >= 5:
-            $ time = 2
-            $ timer_range = 2
-        if strength > 10:
-            $ time = 3
-            $ timer_range = 3
-        show screen countdown
-        menu:
-            'RUN!':
-                hide screen countdown
-                show bunny:
-                    linear .5 xalign .7 yalign .7
-
-        $ time = 1
-        $ timer_range = 1
-        if strength >= 5:
-            $ time = 2
-            $ timer_range = 2
-        if strength > 10:
-            $ time = 3
-            $ timer_range = 3
-        show screen countdown
-        menu:
-            'RUN!!!':
-                hide screen countdown
-                show bunny:
-                    linear .5 xalign 1.5 yalign .5
-                hide farmer2
+        call runningMinigame(2)
+        if _return == running_minigame_lose:
+            jump caught
 
     'food +10'
     $food+=10
 
     jump daily
 
+#bunny visits farm 3, highest chance of getting into running minigame,
+#and hightest food reward
 label farm3:
     scene farm3:
         zoom 0.59
@@ -329,56 +307,16 @@ label farm3:
             yalign 1.2
             zoom 0.5
         #run minigame here
-        $ time = 1
-        $ timer_range = 1
-        $ timer_jump = 'caught'
-        if strength >= 5:
-            $ time = 2
-            $ timer_range = 2
-        if strength > 10:
-            $ time = 3
-            $ timer_range = 3
-        show screen countdown
-        menu:
-            'RUN!':
-                hide screen countdown
-                show bunny:
-                    linear .5 xalign .6 yalign .5
-        $ time = 1
-        $ timer_range = 1
-        if strength >= 5:
-            $ time = 2
-            $ timer_range = 2
-        if strength > 10:
-            $ time = 3
-            $ timer_range = 3
-        show screen countdown
-        menu:
-            'RUN!!':
-                hide screen countdown
-                show bunny:
-                    linear .5 xalign .8 yalign .5
-        $ time = 1
-        $ timer_range = 1
-        if strength >= 5:
-            $ time = 2
-            $ timer_range = 2
-        if strength > 10:
-            $ time = 3
-            $ timer_range = 3
-        show screen countdown
-        menu:
-            'RUN!!!':
-                hide screen countdown
-                show bunny:
-                    linear .5 xalign 1.5 yalign .5
-                hide farmer2
+        call runningMinigame(3)
+        if _return == running_minigame_lose:
+            jump caught
 
     'food +15'
     $food+=15
 
     jump daily
 
+#bunny exercises, increaseing his [strength]
 label exercise:
     scene bg forest:
         zoom 0.59
@@ -399,6 +337,7 @@ label exercise:
 
     jump daily
 
+#bunny was caught by a farmer (lose)
 label eaten:
 
         # ... the game continues here.
@@ -418,6 +357,7 @@ label eaten:
 
 return
 
+#bunny was caught by an animal (lose)
 label caught:
 
     scene bg forest:
@@ -434,6 +374,7 @@ label caught:
 
 return
 
+#bunny starved to death (lose)
 label starve:
     scene bg forest:
         zoom 0.59
@@ -449,6 +390,7 @@ label starve:
 
 return
 
+#bunny dehydrated to death (lose)
 label dehydrate:
     scene bg forest:
         zoom 0.59
@@ -464,6 +406,7 @@ label dehydrate:
 
 return
 
+#label for game complete (won)
 label success:
     scene bg forest:
         zoom 0.59

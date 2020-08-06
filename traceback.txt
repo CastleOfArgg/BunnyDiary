@@ -1,0 +1,28 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/script.rpy", line 266, in script call
+    call runningMinigame
+  File "game/running_minigame.rpy", line 97, in script
+    label runningMinigame(diff):
+Exception: Required parameter diff has no value.
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "game/script.rpy", line 266, in script call
+    call runningMinigame
+  File "game/running_minigame.rpy", line 97, in script
+    label runningMinigame(diff):
+  File "C:\Users\shawn\Documents\renpy-7.3.5-sdk\renpy\ast.py", line 855, in execute
+    values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
+  File "C:\Users\shawn\Documents\renpy-7.3.5-sdk\renpy\ast.py", line 158, in apply_arguments
+    return parameters.apply(args, kwargs, ignore_errors)
+  File "C:\Users\shawn\Documents\renpy-7.3.5-sdk\renpy\ast.py", line 122, in apply
+    raise Exception("Required parameter %s has no value." % name)
+Exception: Required parameter diff has no value.
+
+Windows-8-6.2.9200
+Ren'Py 7.3.5.606
+BunnyDiary 1.0
+Thu Aug 06 14:02:59 2020
