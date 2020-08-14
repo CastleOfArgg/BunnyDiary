@@ -6,3 +6,4 @@ Players need to get water and food while under threats of predators and angry fa
 Have fun playing!
 
 
+https://kastle.itch.io/bunny-diary
